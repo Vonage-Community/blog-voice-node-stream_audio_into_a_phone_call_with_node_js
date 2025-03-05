@@ -8,7 +8,7 @@
     {
         "action": "input",
         "eventUrl": [
-          "https://8265-77-95-178-163.ngrok-free.app/webhooks/events"
+          "https://example.test/webhooks/events"
         ],
         
         "type": ["dtmf"],
