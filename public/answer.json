@@ -1,13 +1,20 @@
 [
     {
         "action": "talk",
-        "text": "<speak>Please hold to listen to some music<break time='1s' /></speak>",
-        "voiceName": "Russell"
+        "text": "Press 1 to hear some hold music being streamed into the call.",
+        "language": "en-GB",
+        "type": 1
     },
     {
-        "action": "stream",
-        "streamUrl": [
-            "http://demo.ngrok.io/audio/silence.mp3"
-        ]
-    }
+        "action": "input",
+        "eventUrl": [
+          "https://example.test/webhooks/events"
+        ],
+        
+        "type": ["dtmf"],
+        "dtmf": {
+          "maxDigits": 1,
+          "timeOut": 10
+        }
+      }
 ]

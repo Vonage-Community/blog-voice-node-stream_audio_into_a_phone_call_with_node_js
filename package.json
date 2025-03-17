@@ -1,6 +1,6 @@
 {
   "name": "voice-stream-audio-node",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Play audio into a call",
   "main": "server.js",
   "scripts": {
