@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mark Lewin",
-  "contributor": "Amanda Cavallaro",
+  "contributors": ["Amanda Cavallaro, Jim Seconde"],
   "license": "ISC",
   "dependencies": {
     "@vonage/server-sdk": "^2.10.10",
