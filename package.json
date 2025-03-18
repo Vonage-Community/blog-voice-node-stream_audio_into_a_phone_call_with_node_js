@@ -10,7 +10,7 @@
   "contributors": ["Amanda Cavallaro, Jim Seconde"],
   "license": "ISC",
   "dependencies": {
-    "@vonage/server-sdk": "^2.10.10",
+    "@vonage/server-sdk": "^3.0.0",
     "@vonage/voice": "^1.18.0",
     "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
