@@ -2,7 +2,7 @@ require('dotenv').config({ path: '.env' })
 const express = require('express')
 const app = express()
 const path = require('path')
-const Vonage = require('@vonage/server-sdk')
+const { NCCOBuilder, Stream, Voice, Talk, HttpMethod } = require('@vonage/voice');
 
 const TO_NUMBER = process.env.TO_NUMBER
 const VONAGE_NUMBER = process.env.VONAGE_NUMBER
@@ -10,10 +10,10 @@ const BASE_URL = process.env.BASE_URL
 const VONAGE_APPLICATION_ID = process.env.VONAGE_APPLICATION_ID
 const VONAGE_APPLICATION_PRIVATE_KEY_PATH = process.env.VONAGE_APPLICATION_PRIVATE_KEY_PATH
 
-const vonage = new Vonage({
+const voice = new Voice({
   applicationId: VONAGE_APPLICATION_ID,
   privateKey: VONAGE_APPLICATION_PRIVATE_KEY_PATH
-})
+});
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -21,75 +21,59 @@ app.use(express.urlencoded({ extended: true }))
 // Serve contents of public folder in the /audio path
 app.use('/audio', express.static(path.join(__dirname, 'public')))
 
-const answer_url = BASE_URL + '/audio/answer.json'
+const answer_url = BASE_URL + '/audio/answer'
 const audio_url = BASE_URL + '/audio/music.mp3'
 const event_url = BASE_URL + '/webhooks/events'
 
-const makeOutboundCall = (req, res) => {
+const makeOutboundCall = async (req, res) => {
   console.log('Making the outbound call...')
 
-  vonage.calls.create({
-    to: [{
-      type: 'phone',
-      number: TO_NUMBER
-    }],
-    from: {
-      type: 'phone',
-      number: VONAGE_NUMBER
-    },
-    answer_url: [answer_url],
-    event_url: [event_url],
-    event_method: 'POST',
-  })
+  try {
+    console.log("Making the outbound call...");
 
-  res.json(true);
-}
+    const resp = await voice.createOutboundCall(
+      {
+        to: [{ type: "phone", number: TO_NUMBER }],
+        from: { type: "phone", number: VONAGE_NUMBER },
+        answer_url: [answer_url],
+        answer_method: HttpMethod.POST, // This will hit the NCCO response
+        event_url: [event_url], // Event URL to track events like answered
+      }
+    );
 
-const startStream = (call_uuid) => {
-  console.log(`streaming ${audio_url} into ${call_uuid}`)
-  vonage.calls.stream.start(call_uuid, { stream_url: [audio_url], loop: 0 }, (err, res) => {
-    if (err) {
-      console.error(err)
-    }
-    else {
-      console.log(res)
-    }
-  })
-}
-
-const stopStream = (call_uuid) => {
-  vonage.calls.stream.stop(call_uuid, (err, res) => {
-    if (err) {
-      console.error(err)
-    }
-    else {
-      console.log(res)
-    }
-  })
+    console.log("Outbound call response:", resp);
+    res.status(200).send("Call initiated!");
+  } catch (error) {
+    console.error("Error making the outbound call:", error);
+    res.status(500).send("Failed to make call.");
+  }
 }
 
 app.get('/call', makeOutboundCall)
 
-app.post('/webhooks/events', (req, res) => {
-  console.log(req.body)
+app.post("/audio/answer", (req, res) => {
+  const builder = new NCCOBuilder();
 
-  if (req.body.dtmf && req.body.dtmf.digits == '1') {
-    const call_uuid = req.body.uuid
+  builder.addAction(
+    new Talk('Here is some soothing music for you')
+  )
 
-    // Play audio into call
-    startStream(call_uuid)
+  builder.addAction(
+    new Stream(audio_url)
+  );
 
-    // // Disconnect the call after 20 secs
-    setTimeout(() => {
-      stopStream(call_uuid)
-      vonage.calls.update(call_uuid, { action: 'hangup' }, (req, res) => {
-        console.log("Disconnecting...")
-      });
-    }, 20000)
+  // Send back the generated NCCO
+  res.json(builder.build());
+});
+
+// Event webhook to manage call events (like 'answered')
+app.post("/webhooks/events", (req, res) => {
+  if (req.body.status == "answered") {
+    const call_uuid = req.body.uuid;
+    console.log(`Call answered with UUID: ${call_uuid}`);
   }
-
-  res.status(200).end()
-})
+  res.status(200).end();
+});
 
 // Serve app on port 3000
 app.listen(3000, () => {

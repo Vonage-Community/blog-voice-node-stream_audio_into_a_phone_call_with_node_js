@@ -20,18 +20,16 @@ Follow the steps below to set up and run this application:
 
 3. **Start an ngrok tunnel:** Run `ngrok http 3000` in your terminal to start an ngrok tunnel.
 
-4. **Update the silence.mp3 URL:** In the `/public/answer.json` file, change the hostname of the `silence.mp3` URL to match your ngrok hostname.
+4. **Configure environment variables:** Rename the `example.env` file to `.env` and update the variables with your API key, secret, private key file path, and your ngrok URL. Also, specify the 'to' and 'from' numbers for making the call.
 
-5. **Configure environment variables:** Rename the `example.env` file to `.env` and update the variables with your API key, secret, private key file path, and your ngrok URL. Also, specify the 'to' and 'from' numbers for making the call.
+5. **Install dependencies:** Run `npm install` in your terminal from the root directory of the project.
 
-6. **Install dependencies:** Run `npm install` in your terminal from the root directory of the project.
-
-7. **Start the application:** Run `node server.js` to start the app.
+6. **Start the application:** Run `node server.js` to start the app.
 
 ## Usage
 
 To initiate a call, make a `GET` request to `http://localhost:3000/call`. This will call the configured `TO_NUMBER`.
 
-If all goes well, you will first hear a message, followed by silence. After a few seconds, music will play for 30 seconds and then stop.
+If all goes well, you will first hear a message followed by 30 seconds of music which will then stop.
 
 **Note**: The music file this application uses (*City Sunshine* by Kevin MacLeod) is in the public domain. For more information, visit [FreePD](https://freepd.com).
