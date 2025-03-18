@@ -10,11 +10,6 @@ const BASE_URL = process.env.BASE_URL
 const VONAGE_APPLICATION_ID = process.env.VONAGE_APPLICATION_ID
 const VONAGE_APPLICATION_PRIVATE_KEY_PATH = process.env.VONAGE_APPLICATION_PRIVATE_KEY_PATH
 
-// const vonage = new Vonage({
-//   applicationId: VONAGE_APPLICATION_ID,
-//   privateKey: VONAGE_APPLICATION_PRIVATE_KEY_PATH
-// })
-
 const voice = new Voice({
   applicationId: VONAGE_APPLICATION_ID,
   privateKey: VONAGE_APPLICATION_PRIVATE_KEY_PATH
