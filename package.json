@@ -12,7 +12,7 @@
   "dependencies": {
     "@vonage/server-sdk": "^3.0.0",
     "@vonage/voice": "^1.18.0",
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.20.6",
     "dotenv": "^6.2.0",
     "express": "^4.16.4"
   }
